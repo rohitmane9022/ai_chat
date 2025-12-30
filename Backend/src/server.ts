@@ -7,4 +7,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/chat", chatRoutes);
 
+app.get("/",(req,res)=>{
+    res.send("hello and check")
+})
+
 export default app;
