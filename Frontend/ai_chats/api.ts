@@ -1,5 +1,5 @@
 export async function sendMessage(message: string, sessionId?: string) {
-  const res = await fetch("http://localhost:4000/chat/message", {
+  const res = await fetch("https://ai-chat-kt00.onrender.com/chat/message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, sessionId }),
@@ -10,7 +10,7 @@ export async function sendMessage(message: string, sessionId?: string) {
 
 export async function fetchChatHistory(sessionId: string) {
   const res = await fetch(
-    `http://localhost:4000/chat/history/${sessionId}`
+    `https://ai-chat-kt00.onrender.com/chat/history/${sessionId}`
   );
 
   return res.json();
