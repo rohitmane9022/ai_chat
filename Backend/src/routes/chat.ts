@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Response,Request } from "express";
 import { db } from "../db";
 import { generateReply } from "../services/llm.service";
 
 const router = express.Router();
 
 
-router.post("/message", async (req, res) => {
+router.post("/message", async (req: Request, res:Response) => {
   const { message, sessionId } = req.body;
   if (!message) {
     return res.status(400).json({ error: "Empty message" });
