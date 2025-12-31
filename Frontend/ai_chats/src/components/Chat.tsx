@@ -86,13 +86,12 @@ export function Chat() {
 
   return (
     <div className="flex flex-col h-full bg-card rounded-2xl shadow-lg border overflow-hidden">
-      {/* Header */}
+      
       <div className="flex items-center gap-3 px-5 py-4 bg-primary text-primary-foreground">
         <MessageCircle className="w-6 h-6" />
         <h2 className="font-semibold text-lg">Support Chat</h2>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {messages.length === 0 && (
           <p className="text-center text-muted-foreground">
@@ -108,8 +107,8 @@ export function Chat() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Quick Actions */}
-      <div className="p-3 border-t">
+     
+      <div className="p-3  border-t">
         {QUICK_ACTIONS.map((action) => (
           <QuickActionChip
             key={action}
@@ -119,7 +118,7 @@ export function Chat() {
         ))}
       </div>
 
-      {/* Input */}
+      
       <ChatInput onSend={handleSend} disabled={isTyping} />
     </div>
   );

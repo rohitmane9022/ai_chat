@@ -33,7 +33,6 @@ Rules:
       `,
     });
 
-    // Convert DB history → Gemini format
     const chatHistory = history.map((m) => ({
       role: m.sender === "user" ? "user" : "model",
       parts: [{ text: m.text }],
@@ -49,7 +48,7 @@ Rules:
 
     let reply = response.text();
 
-    // 🔒 SAFETY NET (optional but smart)
+   
     reply = reply.replace(/\[.*?\]/g, "7");
 
     return reply;

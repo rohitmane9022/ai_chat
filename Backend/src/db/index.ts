@@ -1,11 +1,12 @@
-import mysql from "mysql2/promise";
-import dotenv from "dotenv";
+import { Pool } from "pg";
 
-dotenv.config();
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is missing");
+}
 
-export const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+
+
+export const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });

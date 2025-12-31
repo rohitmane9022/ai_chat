@@ -1,59 +1,70 @@
 import express from "express";
 import { db } from "../db";
-import { v4 as uuid } from "uuid";
 import { generateReply } from "../services/llm.service";
 
 const router = express.Router();
 
+
 router.post("/message", async (req, res) => {
   const { message, sessionId } = req.body;
-  if (!message) return res.status(400).json({ error: "Empty message" });
+  if (!message) {
+    return res.status(400).json({ error: "Empty message" });
+  }
 
-  const conversationId = sessionId || uuid();
-
-  console.log("Incoming sessionId:", sessionId);
-  console.log("Using conversationId:", conversationId);
+  
+  let conversationId = sessionId;
 
   try {
-    // 1️⃣ Ensure conversation exists
+  
+    if (!conversationId) {
+      const convoResult = await db.query(
+        `INSERT INTO conversations DEFAULT VALUES RETURNING id`
+      );
+      conversationId = convoResult.rows[0].id;
+    } else {
+      await db.query(
+        `INSERT INTO conversations (id)
+         VALUES ($1)
+         ON CONFLICT DO NOTHING`,
+        [conversationId]
+      );
+    }
+
+  
     await db.query(
-      "INSERT IGNORE INTO conversations (id) VALUES (?)",
-      [conversationId]
+      `INSERT INTO messages (conversation_id, sender, text)
+       VALUES ($1, 'user', $2)`,
+      [conversationId, message]
     );
 
-    // 2️⃣ Save user message
-    await db.query(
-      `INSERT INTO messages (id, conversation_id, sender, text, created_at)
-       VALUES (?, ?, 'user', ?, NOW())`,
-      [uuid(), conversationId, message]
-    );
-
-    // 3️⃣ Load conversation history
-    const [rows] = await db.query(
+    const historyResult = await db.query(
       `SELECT sender, text
        FROM messages
-       WHERE conversation_id = ?
+       WHERE conversation_id = $1
        ORDER BY created_at ASC`,
       [conversationId]
     );
 
-    // 4️⃣ Generate AI reply
-    const reply = await generateReply(rows as any[]);
+  
+    const reply = await generateReply(historyResult.rows);
 
-    // 5️⃣ Save AI reply
+    
     await db.query(
-      `INSERT INTO messages (id, conversation_id, sender, text, created_at)
-       VALUES (?, ?, 'ai', ?, NOW())`,
-      [uuid(), conversationId, reply]
+      `INSERT INTO messages (conversation_id, sender, text)
+       VALUES ($1, 'ai', $2)`,
+      [conversationId, reply]
     );
 
-    res.json({ reply, sessionId: conversationId });
+    return res.json({
+      reply,
+      sessionId: conversationId,
+    });
 
   } catch (error) {
     console.error("Chat error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Service unavailable",
-      reply: "I'm sorry, I'm having trouble connecting. Please try again later."
+      reply: "I'm sorry, I'm having trouble connecting. Please try again later.",
     });
   }
 });
@@ -65,18 +76,21 @@ router.get("/history/:conversationId", async (req, res) => {
   const { conversationId } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const result = await db.query(
       `SELECT sender, text, created_at
        FROM messages
-       WHERE conversation_id = ?
+       WHERE conversation_id = $1
        ORDER BY created_at ASC`,
       [conversationId]
     );
 
-    res.json({ messages: rows });
+    return res.json({ messages: result.rows });
+
   } catch (error) {
     console.error("History error:", error);
-    res.status(500).json({ error: "Failed to load history" });
+    return res.status(500).json({
+      error: "Failed to load history",
+    });
   }
 });
 

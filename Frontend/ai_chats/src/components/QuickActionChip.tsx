@@ -10,7 +10,7 @@ export function QuickActionChip({ label, onClick }: QuickActionChipProps) {
     <button
       onClick={onClick}
       className={cn(
-        "px-4 py-2 rounded-full text-sm font-medium",
+        "px-4 py-2 m-1 rounded-full text-sm font-medium",
         "bg-chat-chip border border-chat-chip-border",
         "text-foreground/80 hover:bg-chat-chip-hover",
         "transition-all duration-200 hover:shadow-sm",
