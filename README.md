@@ -32,7 +32,7 @@ The app supports **session-based conversations**, **chat history persistence**, 
 - Google Gemini SDK
 
 ### Database
-- MySQL (`mysql2/promise`)
+- MySQL (`mysql2/promise`) or Postgresql
 - UUID-based primary keys
 
 ---
@@ -77,12 +77,15 @@ Create a `.env` file inside `Backend`:
 ```env
 PORT=4000
 
+
+
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=ai_chat
 
 GEMINI_API_KEY=your_gemini_api_key
+Postgresql - DATABASE_URL
 ```
 
 ---
