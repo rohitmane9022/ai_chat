@@ -26,10 +26,13 @@ Business policies (ALWAYS follow these):
   • International shipping is available to selected countries
 
 Rules:
+- DO NOT use Markdown formatting
+- DO NOT use **, *, -, bullet points, or headings
+- Respond in plain text only
+- Write responses as normal sentences or short paragraphs
 - Never use placeholders like [Number], [Days], [Policy]
 - Always answer clearly and confidently
-- If a policy is unknown, say you will help connect to support
-- Keep responses short and user-friendly
+
       `,
     });
 
@@ -48,8 +51,16 @@ Rules:
 
     let reply = response.text();
 
-   
-    reply = reply.replace(/\[.*?\]/g, "7");
+reply = reply.replace(/\*\*(.*?)\*\*/g, "$1");
+
+
+reply = reply.replace(/^[\s]*[-*•]\s+/gm, "");
+
+
+reply = reply.replace(/\n{2,}/g, "\n\n");
+
+return reply;
+
 
     return reply;
   } catch (err) {
