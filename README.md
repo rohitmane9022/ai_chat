@@ -85,7 +85,7 @@ DB_PASSWORD=your_mysql_password
 DB_NAME=ai_chat
 
 GEMINI_API_KEY=your_gemini_api_key
-Postgresql - DATABASE_URL
+Postgresql = DATABASE_URL
 ```
 
 ---
